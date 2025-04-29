@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [accountnumber, setAccountNumber] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const emailValidator = (email) => {
+  const emailValidator = (username) => {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailPattern.test(email);
+    return emailPattern.test(username);
   };
 
   const passwordValidator = (password) => {
@@ -21,8 +22,8 @@ const LoginForm = () => {
     setErrorMessage('');
     setSuccessMessage('');
 
-    if (!emailValidator(email)) {
-      setErrorMessage('Invalid email address');
+    if (!emailValidator(username)) {
+      setErrorMessage('Invalid username address');
       return;
     }
     if (!passwordValidator(password)) {
@@ -32,30 +33,53 @@ const LoginForm = () => {
 
     // Simulate API call (you'll replace this with actual backend call)
     try {
-      console.log('Sending login request:', { email, password });
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
 
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const data = await response.json();
 
-      setSuccessMessage('Login successful!');
-      setEmail('');
-      setPassword('');
+      if (response.ok) {
+        setSuccessMessage('Login successful!');
+        setUsername('');
+        setPassword('');
+        setAccountNumber('');
+        localStorage.setItem('token', data.token);
+      } else {
+        setErrorMessage(data.message || 'Login failed. Please try again.');
+      }
     } catch (error) {
       setErrorMessage('Login failed. Please try again.');
     }
   };
 
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>Email:</label><br />
+        <label>Username:</label><br />
         <input
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
       </div>
+
+      <div>
+        <label>Account Number:</label><br />
+        <input
+          type="text"
+          value={accountnumber}
+          onChange={(e) => setAccountNumber(e.target.value)}
+          required
+        />
+      </div>  
+      
       <div>
         <label>Password:</label><br />
         <input
