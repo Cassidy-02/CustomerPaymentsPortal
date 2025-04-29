@@ -8,7 +8,7 @@ const Header = () => {
       <h1>Customer Payments Portal</h1>
       <nav>
         <Link to="/" style={{ color: 'white', marginRight: '10px' }}>Home</Link>
-        <Link to="/Register" style={{ color: 'white', marginRight: '10px' }}>Register</Link>
+        <Link to="/register" style={{ color: 'white', marginRight: '10px' }}>Register</Link>
         <Link to="/login" style={{ color: 'white', marginRight: '10px' }}>Login</Link>
         <Link to="/payments" style={{ color: 'white' }}>Payments</Link>
         
