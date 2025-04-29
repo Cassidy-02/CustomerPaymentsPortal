@@ -6,8 +6,9 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     dialectOptions: {
         options: {
             encrypt: true, // Use this if you're on Windows Azure
-            trustServerCertificate: true // Change to true for local dev / self-signed certs
+            trustServerCertificate: true, // Change to true for local dev / self-signed certs
+            server: process.env.DB_HOST // Add server property as required by MSSQL dialect
         }
     }
- });
-    module.exports = sequelize;
+});
+module.exports = sequelize;
