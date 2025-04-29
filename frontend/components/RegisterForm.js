@@ -2,19 +2,24 @@ import React, { useState } from 'react';
 
 const RegisterForm = () => {
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [idnumber, setIdNumber] = useState('');
+  const [accountnumber, setAccountNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   const nameValidator = (name) => /^[a-zA-Z\s]+$/.test(name);
+  const usernameValidator = (username) => /^[a-zA-Z0-9]+$/.test(username);
+  const idNumberValidator = (idnumber) => /^\d{8}$/.test(idnumber);
+  const accountNumberValidator = (accountnumber) => /^\d{10}$/.test(accountnumber);
   const emailValidator = (email) =>
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
   const passwordValidator = (password) =>
     /^(?=.[A-Za-z])(?=.\d)[A-Za-z\d]{8,}$/.test(password);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!nameValidator(fullName)) {
@@ -22,8 +27,18 @@ const RegisterForm = () => {
       return;
     }
 
-    if (!emailValidator(email)) {
+    if (!usernameValidator(username)) {
       setErrorMessage('Invalid email address.');
+      return;
+    }
+
+    if (!idNumberValidator(idnumber)) {
+      setErrorMessage('ID number must be 8 digits long.');
+      return;
+    }
+
+    if (!accountNumberValidator(accountnumber)) {
+      setErrorMessage('Account number must be 10 digits long.');
       return;
     }
 
@@ -37,10 +52,33 @@ const RegisterForm = () => {
       return;
     }
 
-    console.log('Registering:', { fullName, email, password });
+    try {
+      const response = await fetch('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username,
+          email: username,
+          password,
+          idnumber,
+          accountnumber
+        })
+      });
 
-    setErrorMessage('');
-    setSuccessMessage('Registration successful!');
+      if (response.ok) {
+        setSuccessMessage('Registration successful!');
+        setErrorMessage('');
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.message || 'Registration failed.');
+        setSuccessMessage('');
+      }
+    } catch (error) {
+      setErrorMessage('An error occurred during registration.');
+      setSuccessMessage('');
+    }
   };
 
   return (
@@ -56,11 +94,31 @@ const RegisterForm = () => {
       </div>
 
       <div>
-        <label>Email:</label>
+        <label>Username:</label>
         <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label>ID Number:</label>
+        <input
+          type="text"
+          value={idnumber}
+          onChange={(e) => setIdNumber(e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label>Account Number:</label>
+        <input
+          type="text"
+          value={accountnumber}
+          onChange={(e) => setAccountNumber(e.target.value)}
           required
         />
       </div>
