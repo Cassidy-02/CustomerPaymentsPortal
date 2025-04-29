@@ -22,6 +22,16 @@ const User = sequelize.define('User', {
         allowNull: false,
         unique: true
     },
+    idnumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    accountnumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
 });
 
 module.exports = User;
