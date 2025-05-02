@@ -1,8 +1,8 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const router = express.Router();
 
@@ -23,8 +23,7 @@ const validateInput = (req, res, next) => {
 router.post('/register', validateInput, async (req, res) => {
     const {username, email, password, idnumber, accountnumber} = req.body;
     try {
-        const hashed = await bcrypt.hash(password, 10);
-        const user = await User.create({username, email, password: hashed, idnumber, accountnumber});
+        const user = await User.create({username, email, password, idnumber, accountnumber});
         res.status(201).json({message: 'User registered'});
     } catch (err) {
         res.status(400).json({message: 'User already exists or error occurred'});
